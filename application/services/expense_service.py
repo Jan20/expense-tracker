@@ -1,25 +1,19 @@
+from datetime import datetime
+
+from application.adapters.persistence.repositories.expense_repository import ExpenseRepository
 from application.entities.expense import Expense
 from application.use_cases.expense_usecase import ExpenseUseCase
 
 
 class ExpenseService(ExpenseUseCase):
-    def __init__(self, expense_repository: ExpenseRepository, email_service: EmailService):
+    def __init__(self, expense_repository: ExpenseRepository):
         self.expense_repository = expense_repository
-        self.email_service = email_service
 
-    def create_expense(self, user_id: str, amount: float, description: str, currency_code: str) -> Expense:
-        # Validate and create a new expense entity
-        currency = Currency(currency_code)
-        if not currency.is_valid():
-            raise ValueError("Invalid currency code")
+    def create_expense(self, timestamp: datetime, description: str, amount: float) -> Expense:
 
-        expense = Expense(user_id, amount, description, currency)
+        expense = Expense(timestamp=timestamp, description=description, amount=amount)
 
-        # Save the expense to the repository
         self.expense_repository.save(expense)
-
-        # Optionally, you can notify the user about the expense
-        self.email_service.send_expense_notification(user_id, expense)
 
         return expense
 
@@ -29,15 +23,15 @@ class ExpenseService(ExpenseUseCase):
             raise ValueError("Expense not found")
         return expense
 
-    def update_expense(self, expense_id: str, amount: float, description: str, currency_code: str) -> Expense:
+    def update_expense(self, expense_id: str, timestamp: datetime, description: str, amount: float) -> Expense:
         expense = self.get_expense(expense_id)
-        currency = Currency(currency_code)
-        if not currency.is_valid():
-            raise ValueError("Invalid currency code")
 
-        expense.amount = amount
+        if expense is None:
+            raise ValueError(f"Expense with ID {expense_id} not found.")
+
+        expense.timestamp = timestamp
         expense.description = description
-        expense.currency = currency
+        expense.amount = amount
 
         self.expense_repository.update(expense)
 

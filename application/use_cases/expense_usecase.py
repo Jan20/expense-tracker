@@ -1,11 +1,12 @@
 from abc import ABC, abstractmethod
+from datetime import datetime
 
 from application.entities.expense import Expense
 
 
 class ExpenseUseCase(ABC):
     @abstractmethod
-    def create_expense(self, user_id: str, amount: float, description: str, currency_code: str) -> Expense:
+    def create_expense(self, timestamp: datetime, description: str, amount: float) -> Expense:
         """Create a new expense and return the created expense entity."""
         pass
 
@@ -15,7 +16,7 @@ class ExpenseUseCase(ABC):
         pass
 
     @abstractmethod
-    def update_expense(self, expense_id: str, amount: float, description: str, currency_code: str) -> Expense:
+    def update_expense(self, expense_id: str, timestamp: datetime, description: str, amount: float) -> Expense:
         """Update an existing expense and return the updated expense entity."""
         pass
 

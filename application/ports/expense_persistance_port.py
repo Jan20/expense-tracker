@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 from application.entities.expense import Expense
 
@@ -10,7 +11,12 @@ class ExpensePersistencePort(ABC):
         pass
 
     @abstractmethod
-    def get_by_id(self, expense_id: str) -> Expense:
+    def get_all(self) -> List[Expense]:
+        """Retrieve all expenses from the data storage."""
+        pass
+
+    @abstractmethod
+    def get_by_id(self, expense_id: str) -> Expense | None:
         """Retrieve an expense by its ID from the data storage."""
         pass
 

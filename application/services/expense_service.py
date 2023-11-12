@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 
 from application.adapters.persistence.repositories.expense_repository import ExpenseRepository
 from application.entities.expense import Expense
@@ -11,11 +12,17 @@ class ExpenseService(ExpenseUseCase):
 
     def create_expense(self, timestamp: datetime, description: str, amount: float) -> Expense:
 
-        expense = Expense(timestamp=timestamp, description=description, amount=amount)
+        expense = Expense(expense_id=None, timestamp=timestamp, description=description, amount=amount)
 
         self.expense_repository.save(expense)
 
         return expense
+
+    def get_expenses(self) -> List[Expense]:
+        expenses = self.expense_repository.get_all()
+        if not expenses:
+            raise ValueError("Expense not found")
+        return expenses
 
     def get_expense(self, expense_id: str) -> Expense:
         expense = self.expense_repository.get_by_id(expense_id)

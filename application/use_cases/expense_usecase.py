@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from datetime import datetime
+from typing import List
 
 from application.entities.expense import Expense
 
@@ -8,6 +9,11 @@ class ExpenseUseCase(ABC):
     @abstractmethod
     def create_expense(self, timestamp: datetime, description: str, amount: float) -> Expense:
         """Create a new expense and return the created expense entity."""
+        pass
+
+    @abstractmethod
+    def get_expenses(self) -> List[Expense]:
+        """Retrieve all expenses and return the corresponding expense entities."""
         pass
 
     @abstractmethod

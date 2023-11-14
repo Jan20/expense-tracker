@@ -2,13 +2,14 @@ from datetime import datetime
 from typing import List
 
 from application.adapters.persistence.repositories.expense_repository import ExpenseRepository
-from application.entities.expense import Expense
+from application.domain.entities.expense import Expense
 from application.use_cases.expense_usecase import ExpenseUseCase
 
 
 class ExpenseService(ExpenseUseCase):
-    def __init__(self, expense_repository: ExpenseRepository):
-        self.expense_repository = expense_repository
+
+    def __init__(self):
+        self.expense_repository = ExpenseRepository()
 
     def create_expense(self, timestamp: datetime, description: str, amount: float) -> Expense:
 
@@ -48,6 +49,7 @@ class ExpenseService(ExpenseUseCase):
         expense = self.get_expense(expense_id)
         self.expense_repository.delete(expense)
 
-        # Optionally, you can perform cleanup or other actions here
 
-        return
+    def delete_expenses(self):
+        """ Deletes all expenses."""
+        self.expense_repository.delete_all()

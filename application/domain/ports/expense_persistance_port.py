@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import List
 
-from application.entities.expense import Expense
+from application.domain.entities.expense import Expense
 
 
 class ExpensePersistencePort(ABC):

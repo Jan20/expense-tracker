@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Optional
 
 
 @dataclass
 class Expense:
-    expense_id: int
+    expense_id: Optional[str]
     timestamp: datetime
     description: str
     amount: float

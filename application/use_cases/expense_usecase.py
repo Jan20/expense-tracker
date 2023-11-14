@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from datetime import datetime
 from typing import List
 
-from application.entities.expense import Expense
+from application.domain.entities.expense import Expense
 
 
 class ExpenseUseCase(ABC):
@@ -29,4 +29,9 @@ class ExpenseUseCase(ABC):
     @abstractmethod
     def delete_expense(self, expense_id: str):
         """Delete an expense by its ID."""
+        pass
+
+    @abstractmethod
+    def delete_expenses(self, expense_id: str):
+        """Deletes all expenses."""
         pass

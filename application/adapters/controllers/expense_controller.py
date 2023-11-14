@@ -1,18 +1,15 @@
 from datetime import datetime
 
-from application.adapters.persistence.repositories.expense_repository import ExpenseRepository
-from flask import Flask, request, jsonify
+from flask import request, jsonify, Blueprint
 
-from application.services.expense_service import ExpenseService
+from application.domain.services.expense_service import ExpenseService
 
-# Create an instance of the Flask class
-app = Flask(__name__)
+expense_service = ExpenseService()
 
-expense_repository = ExpenseRepository()
-expense_service = ExpenseService(expense_repository)
+expense_blueprint = Blueprint('expenses', __name__)
 
 
-@app.route(rule='/expenses', methods=['POST'])
+@expense_blueprint.route(rule='/expenses', methods=['POST'])
 def create_expense():
     data = request.json
     timestamp = data.get('timestamp')
@@ -33,7 +30,7 @@ def create_expense():
         return jsonify({'error': str(value_error)}), 400
 
 
-@app.route('/expenses', methods=['GET'])
+@expense_blueprint.route('/expenses', methods=['GET'])
 def get_expenses():
     try:
         expenses = expense_service.get_expenses()
@@ -43,7 +40,7 @@ def get_expenses():
         return jsonify({'error': str(e)}), 404
 
 
-@app.route('/expenses/<expense_id>', methods=['GET'])
+@expense_blueprint.route('/expenses/<expense_id>', methods=['GET'])
 def get_expense(expense_id):
     try:
         expense = expense_service.get_expense(expense_id)
@@ -52,7 +49,7 @@ def get_expense(expense_id):
         return jsonify({'error': str(e)}), 404
 
 
-@app.route(rule='/expenses/<expense_id>', methods=['PUT'])
+@expense_blueprint.route(rule='/expenses/<expense_id>', methods=['PUT'])
 def update_expense(expense_id):
     data = request.json
     expense_id = expense_id
@@ -73,14 +70,10 @@ def update_expense(expense_id):
         return jsonify({'error': str(e)}), 404
 
 
-@app.route(rule='/expenses/<expense_id>', methods=['DELETE'])
+@expense_blueprint.route(rule='/expenses/<expense_id>', methods=['DELETE'])
 def delete_expense(expense_id):
     try:
         expense_service.delete_expense(expense_id=expense_id)
         return jsonify({'message': 'Expense deleted successfully'}), 204
     except ValueError as e:
         return jsonify({'error': str(e)}), 404
-
-
-if __name__ == '__main__':
-    app.run(debug=True)

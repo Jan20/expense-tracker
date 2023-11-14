@@ -1,10 +1,9 @@
 from typing import List
-
 from sqlalchemy.orm import sessionmaker
 
 from application.adapters.persistence.models.expense_model import ExpenseEntity, engine
-from application.entities.expense import Expense
-from application.ports.expense_persistance_port import ExpensePersistencePort
+from application.domain.entities.expense import Expense
+from application.domain.ports.expense_persistance_port import ExpensePersistencePort
 
 # Create a session
 Session = sessionmaker(bind=engine)
@@ -80,5 +79,14 @@ class ExpenseRepository(ExpensePersistencePort):
             if expense_model:
                 session.delete(expense_model)
                 session.commit()
+        finally:
+            session.close()
+
+    def delete_all(self) -> None:
+        session = Session()
+        try:
+            session.query(ExpenseEntity).delete()
+            session.commit()
+
         finally:
             session.close()

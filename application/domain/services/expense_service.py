@@ -20,7 +20,8 @@ class ExpenseService(ExpenseUseCase):
         return expense
 
     def get_expenses(self) -> List[Expense]:
-        expenses = self.expense_repository.get_all()
+        expenses: List[Expense] = self.expense_repository.get_all()
+
         if not expenses:
             raise ValueError("Expense not found")
         return expenses
@@ -48,7 +49,6 @@ class ExpenseService(ExpenseUseCase):
     def delete_expense(self, expense_id: str):
         expense = self.get_expense(expense_id)
         self.expense_repository.delete(expense)
-
 
     def delete_expenses(self):
         """ Deletes all expenses."""

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, Float, String, DateTime, create_engine
+from sqlalchemy import Column, Integer, Float, String, DateTime, create_engine, exc
 from sqlalchemy.ext.declarative import declarative_base
 
 from dotenv import load_dotenv
@@ -25,9 +25,20 @@ Base.metadata.bind = engine
 class ExpenseEntity(Base):
     __tablename__ = 'expenses'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    timestamp = Column(DateTime)
-    description = Column(String)
-    amount = Column(Float)
+    timestamp = Column(type_=DateTime)
+    description = Column(type_=String)
+    amount = Column(type_=Float)
 
 
-Base.metadata.create_all(engine)
+try:
+    # Attempt to create all tables defined in the entities
+    Base.metadata.create_all(engine)
+    print("Tables created successfully.")
+
+except exc.SQLAlchemyError as e:
+    # Handle SQLAlchemy-specific exceptions
+    print(f"Have you started Docker?🔥🤔 \n {e}")
+
+except Exception as e:
+    # Handle other exceptions
+    print(f"Unexpected error occurred: {e}")

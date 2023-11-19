@@ -29,3 +29,8 @@ class ExpensePersistencePort(ABC):
     def delete(self, expense: Expense) -> None:
         """Delete an expense entity from the data storage."""
         pass
+
+    @abstractmethod
+    def delete_all(self) -> None:
+        """Delete all stored expenses"""
+        pass

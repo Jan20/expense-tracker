@@ -1,11 +1,7 @@
-from datetime import datetime
-
 from flask import request, jsonify, Blueprint
-
 from application.domain.services.expense_service import ExpenseService
 
 expense_service = ExpenseService()
-
 expense_blueprint = Blueprint('expenses', __name__)
 
 
@@ -15,8 +11,6 @@ def create_expense():
     timestamp = data.get('timestamp')
     description = data.get('description')
     amount = data.get('amount')
-
-    timestamp = datetime.now()
 
     try:
         expense = expense_service.create_expense(
@@ -34,7 +28,6 @@ def create_expense():
 def get_expenses():
     try:
         expenses = expense_service.get_expenses()
-        print(expenses)
         return jsonify({'expenses': expenses}), 200
     except ValueError as e:
         return jsonify({'error': str(e)}), 404
@@ -74,6 +67,15 @@ def update_expense(expense_id):
 def delete_expense(expense_id):
     try:
         expense_service.delete_expense(expense_id=expense_id)
+        return jsonify({'message': 'Expense deleted successfully'}), 204
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 404
+
+
+@expense_blueprint.route(rule='/expenses', methods=['DELETE'])
+def delete_expenses():
+    try:
+        expense_service.delete_expenses()
         return jsonify({'message': 'Expense deleted successfully'}), 204
     except ValueError as e:
         return jsonify({'error': str(e)}), 404

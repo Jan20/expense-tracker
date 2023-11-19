@@ -1,18 +1,17 @@
 from typing import List
 from sqlalchemy.orm import sessionmaker
 
-from application.adapters.persistence.models.expense_model import ExpenseEntity, engine
+from application.adapters.persistence.entities.expense_entity import ExpenseEntity, engine
 from application.domain.entities.expense import Expense
 from application.domain.ports.expense_persistance_port import ExpensePersistencePort
 
-# Create a session
-Session = sessionmaker(bind=engine)
-
 
 class ExpenseRepository(ExpensePersistencePort):
+    # Create a session
+    Session = sessionmaker(bind=engine)
 
     def save(self, expense: Expense) -> None:
-        session = Session()
+        session = self.Session()
         try:
             expense_model = ExpenseEntity(
                 timestamp=expense.timestamp,
@@ -28,9 +27,14 @@ class ExpenseRepository(ExpensePersistencePort):
             session.close()
 
     def get_all(self) -> List[Expense]:
-        session = Session()
+        session = self.Session()
+
+        # Define the format of the input string
+        date_format = "%a, %d %b %Y %H:%M:%S %Z"
+
         try:
-            expense_models = session.query(ExpenseEntity).all()
+            expense_entities = session.query(ExpenseEntity).all()
+
             expenses = [
                 Expense(
                     expense_id=expense_model.id,
@@ -38,14 +42,14 @@ class ExpenseRepository(ExpensePersistencePort):
                     description=expense_model.description,
                     amount=expense_model.amount
                 )
-                for expense_model in expense_models
+                for expense_model in expense_entities
             ]
             return expenses
         finally:
             session.close()
 
     def get_by_id(self, expense_id: str) -> Expense | None:
-        session = Session()
+        session = self.Session()
         try:
             expense_model = session.query(ExpenseEntity).filter_by(expense_id=expense_id).first()
             if expense_model:
@@ -60,7 +64,7 @@ class ExpenseRepository(ExpensePersistencePort):
             session.close()
 
     def update(self, expense: Expense) -> None:
-        session = Session()
+        session = self.Session()
         try:
             expense_model = session.query(ExpenseEntity).filter_by(expense_id=expense.expense_id).first()
             if expense_model:
@@ -73,7 +77,7 @@ class ExpenseRepository(ExpensePersistencePort):
             session.close()
 
     def delete(self, expense: Expense) -> None:
-        session = Session()
+        session = self.Session()
         try:
             expense_model = session.query(ExpenseEntity).filter_by(expense_id=expense.expense_id).first()
             if expense_model:
@@ -83,7 +87,7 @@ class ExpenseRepository(ExpensePersistencePort):
             session.close()
 
     def delete_all(self) -> None:
-        session = Session()
+        session = self.Session()
         try:
             session.query(ExpenseEntity).delete()
             session.commit()

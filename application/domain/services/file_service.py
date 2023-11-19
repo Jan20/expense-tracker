@@ -1,6 +1,6 @@
-import os
 from datetime import datetime
-from os.path import isfile, join
+from os import listdir
+from os.path import isfile, join, isdir
 
 from application.domain.services.expense_service import ExpenseService
 from application.domain.utils.utils import read_csv_file
@@ -13,10 +13,10 @@ class FileService(FileUseCase):
 
     def get_files(self, directory: str) -> [str]:
         """Get all file names in the specified directory"""
-        if not os.path.isdir(directory):
+        if not isdir(directory):
             raise ValueError(f"The specified directory '{directory}' does not exist.")
 
-        return [file for file in os.listdir(directory) if isfile(join(directory, file))]
+        return [file for file in listdir(directory) if isfile(join(directory, file))]
 
     def import_files(self, directory: str) -> str:
 

@@ -14,7 +14,7 @@ def create_expense():
 
     try:
         expense = expense_service.create_expense(
-            timestamp=timestamp,
+            date=timestamp,
             description=description,
             amount=amount
         )
@@ -53,7 +53,7 @@ def update_expense(expense_id):
     try:
         expense = expense_service.update_expense(
             expense_id=expense_id,
-            timestamp=timestamp,
+            date=timestamp,
             description=description,
             amount=amount
         )

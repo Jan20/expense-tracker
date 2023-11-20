@@ -1,10 +1,12 @@
 from datetime import datetime
 from os import listdir
 from os.path import isfile, join, isdir
+from typing import List
 
 from application.domain.services.expense_service import ExpenseService
-from application.domain.utils.utils import read_csv_file
+from application.domain.utils.utils import read_comdirect_file, read_american_express_file
 from application.use_cases.file_usecase import FileUseCase
+from pandas import DataFrame
 
 expense_service = ExpenseService()
 
@@ -19,32 +21,35 @@ class FileService(FileUseCase):
         return [file for file in listdir(directory) if isfile(join(directory, file))]
 
     def import_files(self, directory: str) -> str:
-
+        # Delete all previously stored expenses
         expense_service.delete_expenses()
 
-        files: [str] = self.get_files(directory=directory)
+        # Read data from the CSV file
+        comdirect_file = read_comdirect_file(join(directory, 'comdirect.csv'))
 
-        file_path = join(directory, files[0])
+        self.import_comdirect_expenses(comdirect_file)
 
-        data = read_csv_file(file_path)
+        # Read data from the CSV file
+        american_express_file = read_american_express_file(join(directory, 'american_express.csv'))
 
-        entities = []
+        self.import_american_express_expenses(american_express_file)
 
-        for entry in data:
-            # Convert 'Datum' to datetime
-            timestamp = datetime.strptime(entry['Datum'], '%d/%m/%Y')
+        return "Files imported"
 
-            description = entry["Beschreibung"]
-
-            # Convert 'Betrag' to float
-            amount = float(entry['Betrag'].replace(',', '.'))
-
+    def import_american_express_expenses(self, file: List[dict]):
+        for row in file:
             expense_service.create_expense(
-                timestamp=timestamp,
-                description=description,
-                amount=amount
+                date=datetime.strptime(row['Datum'], '%d/%m/%Y'),
+                description=row['Beschreibung'],
+                amount=float(row['Betrag'].replace(',', '.'))
             )
 
-        print(entities)
+    def import_comdirect_expenses(self, df: DataFrame):
+        df['Umsatz in EUR'] = df['Umsatz in EUR'].apply(lambda x: -x)
 
-        return file_path
+        for index, row in df.iterrows():
+            expense_service.create_expense(
+                date=datetime.strptime(row['Buchungstag'], '%d.%m.%Y'),
+                description=row['Buchungstext'],
+                amount=float(row['Umsatz in EUR'])
+            )

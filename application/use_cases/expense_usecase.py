@@ -32,6 +32,6 @@ class ExpenseUseCase(ABC):
         pass
 
     @abstractmethod
-    def delete_expenses(self, expense_id: str):
+    def delete_expenses(self):
         """Deletes all expenses."""
         pass

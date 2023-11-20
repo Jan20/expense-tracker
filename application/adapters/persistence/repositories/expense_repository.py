@@ -14,7 +14,7 @@ class ExpenseRepository(ExpensePersistencePort):
         session = self.Session()
         try:
             expense_model = ExpenseEntity(
-                timestamp=expense.timestamp,
+                timestamp=expense.date,
                 description=expense.description,
                 amount=expense.amount,
             )
@@ -38,7 +38,7 @@ class ExpenseRepository(ExpensePersistencePort):
             expenses = [
                 Expense(
                     expense_id=expense_model.id,
-                    timestamp=expense_model.timestamp,
+                    date=expense_model.timestamp,
                     description=expense_model.description,
                     amount=expense_model.amount
                 )
@@ -55,7 +55,7 @@ class ExpenseRepository(ExpensePersistencePort):
             if expense_model:
                 return Expense(
                     expense_id=expense_model.expense_id,
-                    timestamp=expense_model.timestamp,
+                    date=expense_model.timestamp,
                     description=expense_model.description,
                     amount=expense_model.amount
                 )
@@ -69,7 +69,7 @@ class ExpenseRepository(ExpensePersistencePort):
             expense_model = session.query(ExpenseEntity).filter_by(expense_id=expense.expense_id).first()
             if expense_model:
                 expense_model.expense_id = expense.expense_id
-                expense_model.timestamp = expense.timestamp
+                expense_model.timestamp = expense.date
                 expense_model.description = expense.description
                 expense_model.amount = expense.amount
                 session.commit()

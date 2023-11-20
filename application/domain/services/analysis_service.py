@@ -10,18 +10,18 @@ expense_service = ExpenseService()
 
 class AnalysisService(AnalysisUseCase):
     months_to_int = {
-        'December': 11,
-        'November': 10,
-        'October': 9,
-        'September': 8,
-        'August': 7,
-        'July': 6,
-        'June': 5,
-        'May': 4,
-        'April': 3,
-        'March': 2,
-        'February': 1,
-        'January': 0
+        '01 January': 1,
+        '02 February': 2,
+        '03 March': 3,
+        '04 April': 4,
+        '05 May': 5,
+        '06 June': 6,
+        '07 July': 7,
+        '08 August': 8,
+        '09 September': 9,
+        '10 October': 10,
+        '11 November': 11,
+        '12 December': 12,
     }
 
     def create_aggregated_expense_dataframe(self) -> DataFrame:
@@ -36,20 +36,21 @@ class AnalysisService(AnalysisUseCase):
         dataframe = DataFrame(columns=['description', 'amount', 'month'])
 
         original_df = self.create_expense_dataframe()
-        print(original_df.to_string())
 
         for key, value in self.months_to_int.items():
             df = original_df.copy()
-            df = df[df['timestamp'].dt.month == value]
+            df = df[df['date'].dt.month == value]
 
             # Replace the 'description' value if it contains the substring
             df['description'] = df['description'].apply(replace_description)
 
+            df = df[df['description'] != 'Investments']
+            df = df[df['description'] != 'American Express']
+
             # Group by 'Description' and 'Location' and sum the 'Amount'
             df = df.groupby(['description']).agg({'amount': 'sum'}).reset_index()
-            df['month'] = key
-
             if df.size > 0:
+                df['month'] = key
                 dataframe = concat(objs=[dataframe, df], ignore_index=True)
 
         return dataframe
@@ -61,7 +62,7 @@ class AnalysisService(AnalysisUseCase):
         df = DataFrame(expenses)
 
         # Convert the 'Date' column to datetime objects
-        df['timestamp'] = to_datetime(df['timestamp'])
+        df['date'] = to_datetime(df['date'])
 
         # Drop rows where 'Amount' column has negative values
         df = df[df['amount'] >= 0]
@@ -80,6 +81,16 @@ def replace_description(description: str) -> str:
         "MONATSGEBÜHR": "American Express",
         "SUMUP * HERR HASE": "Herr Hase",
         "GRAVIS": "Apple",
+        "DER GUTE BAECKER": "Bakery",
+        "Miete": "Rent",
+        "Kontouebertrag": "Investments",
+        "BOOKING": "Traveling",
+        "American Express Europe": "American Express",
+        "MINAMITSURU-GUN": "Japan Journey",
+        "E WIE EINFACH": "e wie einfach",
+        "HALLESCHE": "Hallische",
+        "HOTEL": "Traveling",
+        "Universitaet": "Hochschulsport"
     }
 
     for key, value in replacements.items():

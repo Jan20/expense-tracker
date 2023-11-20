@@ -6,12 +6,12 @@ from typing import Optional
 @dataclass
 class Expense:
     expense_id: Optional[str]
-    timestamp: datetime
+    date: datetime
     description: str
     amount: float
 
     def __str__(self):
-        return f"Timestamp: {self.timestamp}, description: {self.description}, Amount: {self.amount}"
+        return f"Timestamp: {self.date}, description: {self.description}, Amount: {self.amount}"
 
     def __repr__(self):
         return str(self)

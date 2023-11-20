@@ -11,9 +11,9 @@ class ExpenseService(ExpenseUseCase):
     def __init__(self):
         self.expense_repository = ExpenseRepository()
 
-    def create_expense(self, timestamp: datetime, description: str, amount: float) -> Expense:
+    def create_expense(self, date: datetime, description: str, amount: float) -> Expense:
 
-        expense = Expense(expense_id=None, timestamp=timestamp, description=description, amount=amount)
+        expense = Expense(expense_id=None, date=date, description=description, amount=amount)
 
         self.expense_repository.save(expense)
 
@@ -32,13 +32,13 @@ class ExpenseService(ExpenseUseCase):
             raise ValueError("Expense not found")
         return expense
 
-    def update_expense(self, expense_id: str, timestamp: datetime, description: str, amount: float) -> Expense:
+    def update_expense(self, expense_id: str, date: datetime, description: str, amount: float) -> Expense:
         expense = self.get_expense(expense_id)
 
         if expense is None:
             raise ValueError(f"Expense with ID {expense_id} not found.")
 
-        expense.timestamp = timestamp
+        expense.date = date
         expense.description = description
         expense.amount = amount
 

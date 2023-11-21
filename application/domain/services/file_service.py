@@ -1,6 +1,6 @@
 from datetime import datetime
 from os import listdir
-from os.path import isfile, join, isdir
+from os.path import isfile, join, isdir, exists
 from typing import List
 
 from application.domain.services.expense_service import ExpenseService
@@ -24,15 +24,17 @@ class FileService(FileUseCase):
         # Delete all previously stored expenses
         expense_service.delete_expenses()
 
-        # Read data from the CSV file
-        comdirect_file = read_comdirect_file(join(directory, 'comdirect.csv'))
+        comdirect_file_path = join(directory, 'comdirect.csv')
 
-        self.import_comdirect_expenses(comdirect_file)
+        if exists(comdirect_file_path):
+            comdirect_file = read_comdirect_file(file_path=comdirect_file_path)
+            self.import_comdirect_expenses(comdirect_file)
 
-        # Read data from the CSV file
-        american_express_file = read_american_express_file(join(directory, 'american_express.csv'))
+        american_express_file_path = join(directory, 'american_express.csv')
 
-        self.import_american_express_expenses(american_express_file)
+        if exists(american_express_file_path):
+            american_express_file = read_american_express_file(file_path=american_express_file_path)
+            self.import_american_express_expenses(american_express_file)
 
         return "Files imported"
 

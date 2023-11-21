@@ -24,14 +24,7 @@ class AnalysisService(AnalysisUseCase):
         '12 December': 12,
     }
 
-    def create_aggregated_expense_dataframe(self) -> DataFrame:
-        """
-        Creates
-
-        @param timeframe: Specific year for which a chart gets generated
-        @return: None
-        """
-
+    def create_monthly_expenses_dataframe(self) -> DataFrame:
         # Create an empty DataFrame with specific columns
         dataframe = DataFrame(columns=['description', 'amount', 'month'])
 
@@ -49,48 +42,82 @@ class AnalysisService(AnalysisUseCase):
 
             # Group by 'Description' and 'Location' and sum the 'Amount'
             df = df.groupby(['description']).agg({'amount': 'sum'}).reset_index()
-            if df.size > 0:
-                df['month'] = key
+            df['month'] = key
+
+            if not df.empty:
                 dataframe = concat(objs=[dataframe, df], ignore_index=True)
 
         return dataframe
 
-    def create_expense_dataframe(self) -> DataFrame:
-        expenses: List[Expense] = expense_service.get_expenses()
+    def create_yearly_expenses_dataframe(self) -> DataFrame:
+        # Create an empty DataFrame with specific columns
+        df = self.create_expense_dataframe()
 
+        # Replace the 'description' value if it contains the substring
+        df['description'] = df['description'].apply(replace_description)
+
+        df = df[df['description'] != 'Investments']
+        df = df[df['description'] != 'American Express']
+
+        # Group by 'Description' and 'Location' and sum the 'Amount'
+        df = df.groupby(['description']).agg({'amount': 'sum'}).reset_index()
+        print(df.to_string())
+        return df
+
+    def create_expense_dataframe(self) -> DataFrame:
         # Create a DataFrame from the expense list
-        df = DataFrame(expenses)
+        df = DataFrame(expense_service.get_expenses())
 
         # Convert the 'Date' column to datetime objects
         df['date'] = to_datetime(df['date'])
 
         # Drop rows where 'Amount' column has negative values
         df = df[df['amount'] >= 0]
-
+        print(df.to_string())
         return df
+
+    def compute_total_expenses(self) -> float:
+        df = self.create_expense_dataframe()
+        return df['amount'].sum()
 
 
 def replace_description(description: str) -> str:
     replacements = {
+        "APPLE": "apple",
         "AMZN": "Amazon",
         "AMAZON.DE": "Amazon",
+        "Rundfunk": "GEZ",
+        "AXA": "Haftpflicht",
+        "flaschenpost": "Flaschenpost",
+        "AUDIBLE": "Audible",
+        "LONDON": "Traveling",
         "LIEFERANDO": "Lieferando",
+        "AUSLANDSENTGELT": "AUSLANDSENTGELT",
+        "Takeaway": "Lieferando",
         "DEUTSCHEBAHN": "Deutsche Bahn",
         "REWE": "Rewe",
         "HEADSPACE": "Headspace",
         "MONATSGEBÜHR": "American Express",
-        "SUMUP * HERR HASE": "Herr Hase",
+        "HERR HASE": "Herr Hase",
+        "VODAFONE": "Vodafone",
+        "MAGNOLIA": "Magnolia",
         "GRAVIS": "Apple",
         "DER GUTE BAECKER": "Bakery",
         "Miete": "Rent",
         "Kontouebertrag": "Investments",
+        "EUROWINGS": "Traveling",
         "BOOKING": "Traveling",
         "American Express Europe": "American Express",
         "MINAMITSURU-GUN": "Japan Journey",
-        "E WIE EINFACH": "e wie einfach",
+        "ABSCHLAG Strom": "Strom",
+        "ABSCHLAG Gas": "Gas",
         "HALLESCHE": "Hallische",
         "HOTEL": "Traveling",
-        "Universitaet": "Hochschulsport"
+        "Universitaet": "Hochschulsport",
+        "Bargeldauszahlung": "Cash",
+        "Zahnarztpraxis": "Dentist",
+        "Sanitaer": "Craftsmans",
+        "Galactica": "Going Out",
     }
 
     for key, value in replacements.items():

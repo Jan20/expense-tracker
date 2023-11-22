@@ -12,19 +12,17 @@ class ExpenseService(ExpenseUseCase):
         self.expense_repository = ExpenseRepository()
 
     def create_expense(self, date: datetime, description: str, amount: float) -> Expense:
-
-        expense = Expense(expense_id=None, date=date, description=description, amount=amount)
-
-        self.expense_repository.save(expense)
-
-        return expense
+        return self.expense_repository.save(
+            Expense(
+                expense_id=None,
+                date=date,
+                description=description,
+                amount=amount
+            )
+        )
 
     def get_expenses(self) -> List[Expense]:
-        expenses: List[Expense] = self.expense_repository.get_all()
-
-        if not expenses:
-            raise ValueError("Expense not found")
-        return expenses
+        return self.expense_repository.get_all()
 
     def get_expense(self, expense_id: str) -> Expense:
         expense = self.expense_repository.get_by_id(expense_id)
@@ -47,9 +45,7 @@ class ExpenseService(ExpenseUseCase):
         return expense
 
     def delete_expense(self, expense_id: str):
-        expense = self.get_expense(expense_id)
-        self.expense_repository.delete(expense)
+        self.expense_repository.delete(expense_id)
 
     def delete_expenses(self):
-        """ Deletes all expenses."""
         self.expense_repository.delete_all()

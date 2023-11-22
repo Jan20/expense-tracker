@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from pandas import DataFrame
 
 
-class AnalysisUseCase(ABC):
+class ExpenseAnalysisUseCase(ABC):
 
     @abstractmethod
     def create_monthly_expenses_dataframe(self) -> DataFrame:

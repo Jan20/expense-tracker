@@ -22,7 +22,18 @@ def import_files():
     try:
         data = request.get_json()
         directory = data.get('directory')
-        return file_service.import_files(directory)
+        return file_service.import_income_from_file(directory)
+
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+
+@file_blueprint.route(rule='/import-files', methods=['POST'])
+def import_files():
+    try:
+        data = request.get_json()
+        directory = data.get('directory')
+        return file_service.import_income_from_file(directory)
 
     except Exception as e:
         return jsonify({'error': str(e)})

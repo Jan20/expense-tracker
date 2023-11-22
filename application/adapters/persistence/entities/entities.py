@@ -24,6 +24,16 @@ Base.metadata.bind = engine
 
 class ExpenseEntity(Base):
     __tablename__ = 'expenses'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    timestamp = Column(type_=DateTime)
+    description = Column(type_=String)
+    amount = Column(type_=Float)
+
+
+class IncomeEntity(Base):
+    __tablename__ = 'incomes'
+
     id = Column(Integer, primary_key=True, autoincrement=True)
     timestamp = Column(type_=DateTime)
     description = Column(type_=String)

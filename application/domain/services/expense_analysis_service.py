@@ -1,14 +1,11 @@
-from typing import List
-
-from application.domain.entities.expense import Expense
 from application.domain.services.expense_service import ExpenseService
-from application.use_cases.analysis_usecase import AnalysisUseCase
+from application.use_cases.expense_analysis_usecase import ExpenseAnalysisUseCase
 from pandas import DataFrame, to_datetime, concat
 
 expense_service = ExpenseService()
 
 
-class AnalysisService(AnalysisUseCase):
+class ExpenseExpenseAnalysisService(ExpenseAnalysisUseCase):
     months_to_int = {
         '01 January': 1,
         '02 February': 2,

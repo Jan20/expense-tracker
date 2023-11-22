@@ -11,7 +11,12 @@ class FileUseCase(ABC):
         pass
 
     @abstractmethod
-    def import_files(self, file_path: str) -> bool:
+    def import_expenses_from_file(self, file_path: str) -> bool:
+        """ Create a new expense and return the created expense entity. """
+        pass
+
+    @abstractmethod
+    def import_income_from_file(self, file_path: str) -> bool:
         """ Create a new expense and return the created expense entity. """
         pass
 

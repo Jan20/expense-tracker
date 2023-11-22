@@ -1,4 +1,4 @@
-from application.domain.services.analysis_service import AnalysisService
+from application.domain.services.expense_analysis_service import ExpenseExpenseAnalysisService
 from application.use_cases.chart_usecase import ChartUseCase
 import matplotlib
 import matplotlib.pyplot as plt
@@ -8,7 +8,7 @@ from matplotlib import cm
 
 plt.close("all")
 matplotlib.use('agg')
-analysis_service = AnalysisService()
+analysis_service = ExpenseExpenseAnalysisService()
 
 
 class ChartService(ChartUseCase):

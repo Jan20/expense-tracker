@@ -6,7 +6,7 @@ from application.domain.entities.expense import Expense
 
 class ExpensePersistencePort(ABC):
     @abstractmethod
-    def save(self, expense: Expense) -> None:
+    def save(self, expense: Expense) -> Expense:
         """Save an expense entity to the data storage."""
         pass
 
@@ -26,7 +26,7 @@ class ExpensePersistencePort(ABC):
         pass
 
     @abstractmethod
-    def delete(self, expense: Expense) -> None:
+    def delete(self, expense_id: str) -> None:
         """Delete an expense entity from the data storage."""
         pass
 

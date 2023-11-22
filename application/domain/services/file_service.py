@@ -4,11 +4,13 @@ from os.path import isfile, join, isdir, exists
 from typing import List
 
 from application.domain.services.expense_service import ExpenseService
+from application.domain.services.income_service import IncomeService
 from application.domain.utils.utils import read_comdirect_file, read_american_express_file
 from application.use_cases.file_usecase import FileUseCase
 from pandas import DataFrame
 
 expense_service = ExpenseService()
+income_service = IncomeService()
 
 
 class FileService(FileUseCase):
@@ -20,7 +22,25 @@ class FileService(FileUseCase):
 
         return [file for file in listdir(directory) if isfile(join(directory, file))]
 
-    def import_files(self, directory: str) -> str:
+    def import_expenses_from_file(self, directory: str) -> str:
+        # Delete all previously stored expenses
+        expense_service.delete_expenses()
+
+        comdirect_file_path = join(directory, 'comdirect.csv')
+
+        if exists(comdirect_file_path):
+            comdirect_file = read_comdirect_file(file_path=comdirect_file_path)
+            self.import_comdirect_expenses(df=comdirect_file)
+
+        american_express_file_path = join(directory, 'american_express.csv')
+
+        if exists(american_express_file_path):
+            american_express_file = read_american_express_file(file_path=american_express_file_path)
+            self.import_american_express_expenses(file=american_express_file)
+
+        return "Expenses imported"
+
+    def import_income_from_file(self, directory: str) -> str:
         # Delete all previously stored expenses
         expense_service.delete_expenses()
 

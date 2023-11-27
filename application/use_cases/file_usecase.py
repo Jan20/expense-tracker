@@ -16,7 +16,7 @@ class FileUseCase(ABC):
         pass
 
     @abstractmethod
-    def import_income_from_file(self, file_path: str) -> bool:
+    def import_incomes_from_file(self, file_path: str) -> bool:
         """ Create a new expense and return the created expense entity. """
         pass
 
@@ -28,4 +28,9 @@ class FileUseCase(ABC):
     @abstractmethod
     def import_comdirect_expenses(self, df: DataFrame) -> bool:
         """ Imports expenses from a Comdirect file. """
+        pass
+
+    @abstractmethod
+    def import_comdirect_incomes(self, df: DataFrame) -> bool:
+        """ Imports incomes from a Comdirect file. """
         pass

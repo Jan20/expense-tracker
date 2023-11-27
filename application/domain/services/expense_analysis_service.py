@@ -5,7 +5,7 @@ from pandas import DataFrame, to_datetime, concat
 expense_service = ExpenseService()
 
 
-class ExpenseExpenseAnalysisService(ExpenseAnalysisUseCase):
+class ExpenseAnalysisService(ExpenseAnalysisUseCase):
     months_to_int = {
         '01 January': 1,
         '02 February': 2,
@@ -75,6 +75,10 @@ class ExpenseExpenseAnalysisService(ExpenseAnalysisUseCase):
 
     def compute_total_expenses(self) -> float:
         df = self.create_expense_dataframe()
+        # Replace the 'description' value if it contains the substring
+        df['description'] = df['description'].apply(replace_description)
+        df = df[df['description'] != 'Investments']
+
         return df['amount'].sum()
 
 

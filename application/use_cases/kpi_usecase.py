@@ -11,3 +11,8 @@ class KPIUseCase(ABC):
             a user's financial situation.
         """
         pass
+
+    @abstractmethod
+    def calculate_savings_rate(self, total_income: float, total_savings: float) -> float:
+        """ Calculate the savings rate by dividing total savings throw total income."""
+        pass

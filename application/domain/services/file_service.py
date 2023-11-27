@@ -40,21 +40,15 @@ class FileService(FileUseCase):
 
         return "Expenses imported"
 
-    def import_income_from_file(self, directory: str) -> str:
+    def import_incomes_from_file(self, directory: str) -> str:
         # Delete all previously stored expenses
-        expense_service.delete_expenses()
+        income_service.delete_incomes()
 
         comdirect_file_path = join(directory, 'comdirect.csv')
 
         if exists(comdirect_file_path):
             comdirect_file = read_comdirect_file(file_path=comdirect_file_path)
-            self.import_comdirect_expenses(comdirect_file)
-
-        american_express_file_path = join(directory, 'american_express.csv')
-
-        if exists(american_express_file_path):
-            american_express_file = read_american_express_file(file_path=american_express_file_path)
-            self.import_american_express_expenses(american_express_file)
+            self.import_comdirect_incomes(comdirect_file)
 
         return "Files imported"
 
@@ -71,6 +65,16 @@ class FileService(FileUseCase):
 
         for index, row in df.iterrows():
             expense_service.create_expense(
+                date=datetime.strptime(row['Buchungstag'], '%d.%m.%Y'),
+                description=row['Buchungstext'],
+                amount=float(row['Umsatz in EUR'])
+            )
+
+    def import_comdirect_incomes(self, df: DataFrame):
+        df = df[df['Umsatz in EUR'] > 0]
+
+        for index, row in df.iterrows():
+            income_service.create_income(
                 date=datetime.strptime(row['Buchungstag'], '%d.%m.%Y'),
                 description=row['Buchungstext'],
                 amount=float(row['Umsatz in EUR'])

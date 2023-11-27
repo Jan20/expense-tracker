@@ -4,17 +4,16 @@ from typing import Optional
 
 @dataclass
 class KPI:
-    income: Optional[float]
-    expenses: Optional[float]
-    savings: Optional[float]
-
-    def calculate_savings_rate(self):
-        if self.income == 0:
-            return 0
-        return (self.savings / self.income) * 100
+    total_income: Optional[float]
+    total_expenses: Optional[float]
+    total_savings: Optional[float]
+    savings_rate: Optional[float]
 
     def __str__(self):
-        return f"income: {self.income}, expenses: {self.expenses}, savings: {self.savings}"
+        return (f"income: {self.total_income}, "
+                f"expenses: {self.total_expenses}, "
+                f"total_savings: {self.total_savings}, "
+                f"savings_rate: {self.savings_rate}")
 
     def __repr__(self):
         return str(self)

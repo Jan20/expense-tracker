@@ -1,20 +1,18 @@
-from application.domain.services.expense_analysis_service import ExpenseExpenseAnalysisService
 from application.use_cases.chart_usecase import ChartUseCase
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 from cycler import cycler
 from matplotlib import cm
+from pandas import DataFrame
 
 plt.close("all")
 matplotlib.use('agg')
-analysis_service = ExpenseExpenseAnalysisService()
 
 
 class ChartService(ChartUseCase):
 
-    def generate_monthly_expenses_chart(self) -> None:
-        df = analysis_service.create_monthly_expenses_dataframe()
+    def generate_monthly_expenses_chart(self, df: DataFrame) -> None:
         plt.rcParams.update({'font.size': 4})
 
         # Pivot the DataFrame for plotting
@@ -31,8 +29,7 @@ class ChartService(ChartUseCase):
 
         plt.savefig('foo.png', dpi=600)
 
-    def generate_yearly_expenses_chart(self) -> None:
-        df = analysis_service.create_yearly_expenses_dataframe()
+    def generate_aggregated_chart(self, df: DataFrame) -> None:
         plt.rcParams.update({'font.size': 4})
 
         # Pivot the DataFrame for plotting

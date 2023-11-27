@@ -1,4 +1,4 @@
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint, abort
 from application.domain.services.expense_service import ExpenseService
 
 expense_service = ExpenseService()
@@ -29,8 +29,8 @@ def get_expenses():
     try:
         expenses = expense_service.get_expenses()
         return jsonify({'expenses': expenses}), 200
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 404
+    except ValueError as error:
+        abort(404, {'error': str(error)})
 
 
 @expense_blueprint.route('/expenses/<expense_id>', methods=['GET'])

@@ -61,8 +61,6 @@ class IncomeAnalysisService(IncomeAnalysisUseCase):
 
         df['date'] = to_datetime(df['date'])
 
-        df = df[df['amount'] < 0]
-
         return df
 
     def compute_total_income(self) -> float:
@@ -72,7 +70,12 @@ class IncomeAnalysisService(IncomeAnalysisUseCase):
 
 def replace_description(description: str) -> str:
     replacements = {
-        "APPLE": "apple",
+        "Miete, Strom": "Partner",
+        "Lohn/Gehalt": "Salary",
+        "HALLESCHE": "Health Insurance",
+        "DB Vertrieb": "Bahn",
+        "STEUERVERWALTUNG": "Tax Refund",
+        "AMAZON": "Returns"
     }
 
     for key, value in replacements.items():

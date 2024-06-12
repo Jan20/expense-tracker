@@ -2,22 +2,25 @@ version: "3.9"
 
 services:
   postgres_database:
-    image: postgres:16-alpine
+    image: postgres:latest
     container_name: postgres_database
+    env_file:
+      - "../.env"
     volumes:
       - postgres-db-data:/var/lib/postgresql/data
     ports:
       - ${POSTGRES_DATABASE_PORT}:5432
     environment:
-      POSTGRES_DB: ${POSTGRES_DATABASE_NAME}
-      POSTGRES_USER: ${POSTGRES_DATABASE_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_DATABASE_PASSWORD}
+      - POSTGRES_DATABASE_NAME=${POSTGRES_DATABASE_NAME}
+      - POSTGRES_DATABASE_USER=${POSTGRES_DATABASE_USER}
+      - POSTGRES_DATABASE_PASSWORD=${POSTGRES_DATABASE_PASSWORD}
+      - POSTGRES_DATABASE_PORT=${POSTGRES_DATABASE_PORT}
     restart: always
     networks:
       - sample-network
 
   pgadmin_ui:
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:8.7
     container_name: pgadmin-ui
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_ACCOUNT}
